@@ -1,0 +1,5 @@
+model Var {
+  key String @id
+  value String?
+  tag String?
+}

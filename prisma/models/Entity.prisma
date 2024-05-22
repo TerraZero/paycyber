@@ -1,0 +1,43 @@
+model EntityDefinition {
+  id String @id
+  label String
+  settings String @default("{}")
+  fieldmaps FieldMap[]
+  entities Entity[]
+}
+
+model FieldDefinition {
+  id String @id
+  label String
+  type String
+  settings String @default("{}")
+  fieldmaps FieldMap[]
+}
+
+model FieldMap {
+  id String @id
+  label String 
+  settings String @default("{}")
+  entitydefinition EntityDefinition @relation(fields: [entitydefinition_id], references: [id])
+  entitydefinition_id String
+  fielddefinition FieldDefinition @relation(fields: [fielddefinition_id], references: [id])
+  fielddefinition_id String
+  fields Field[]
+}
+
+model Entity {
+  id Int @id @default(autoincrement())
+  label String
+  entitydefinition EntityDefinition @relation(fields: [entitydefinition_id], references: [id])
+  entitydefinition_id String
+  fields Field[]
+}
+
+model Field {
+  id Int @id @default(autoincrement())
+  fieldmap FieldMap @relation(fields: [fieldmap_id], references: [id])
+  fieldmap_id String
+  entity Entity @relation(fields: [entity_id], references: [id])
+  entity_id Int
+  value String @default("{}")
+}

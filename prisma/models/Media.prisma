@@ -1,0 +1,5 @@
+model Media {
+  id String @id
+  bundle String
+  path String
+}

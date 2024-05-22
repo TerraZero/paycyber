@@ -1,0 +1,7 @@
+model Context {
+  key String @id
+  cat String
+  value String /// [json]
+
+  @@unique([key, cat])
+}
