@@ -1,0 +1,30 @@
+{
+  "demo": {
+    "config": {
+      "id": ["group", "type", "game"],
+      "json": ["value"],
+      "base": {
+        "default": {
+          "type": "map_option_location",
+          "game": "myz"
+        }
+      }
+    },
+    "items": [
+      {
+        "group": "location_station",
+        "label": "Bahnhof",
+        "value": {
+          "description": "Das ist ein Bahnhof, mehr Text"
+        }
+      },
+      {
+        "group": "location_bunker",
+        "label": "Bunker",
+        "value": {
+          "description": "Das ist ein Bunker."
+        }
+      }
+    ]
+  }
+}

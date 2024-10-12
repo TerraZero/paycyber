@@ -15,7 +15,10 @@
         "path": "custom/system/modules/${module}/${file}"
       },
       "model": {
-        "path": "prisma/models/${file}"
+        "path": "prisma/models/${file}",
+        "append": [
+          "// > module ${module_name}"
+        ]
       }
     },
     "after": [

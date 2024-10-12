@@ -1,0 +1,112 @@
+{
+  "demo": {
+    "config": {
+      "id": ["group", "type", "game"],
+      "json": ["value"],
+      "base": {
+        "default": {
+          "type": "map_option_environment",
+          "game": "myz"
+        }
+      }
+    },
+    "items": [
+      {
+        "group": "trees",
+        "label": "Dichte Wälder",
+        "value": {
+          "description": "Das ist ein dichter Wald",
+          "random": 2
+        }
+      },
+      {
+        "group": "bushland",
+        "label": "Buschland",
+        "value": {
+          "description": "Buschland",
+          "random": 3
+        }
+      },
+      {
+        "group": "swampland",
+        "label": "Sumpfland",
+        "value": {
+          "description": "Sumpfland",
+          "random": 5
+        }
+      },
+      {
+        "group": "dead_woods",
+        "label": "Tote Wälder",
+        "value": {
+          "description": "Tote Wälder",
+          "random": 3
+        }
+      },
+      {
+        "group": "desert",
+        "label": "Aschewüste",
+        "value": {
+          "description": "Das ist eine Aschewüste",
+          "random": 2
+        } 
+      },
+      {
+        "group": "crater",
+        "label": "Riesiger Krater",
+        "value": {
+          "description": "Riesiger Krater",
+          "random": 1
+        } 
+      },
+      {
+        "group": "glas",
+        "label": "Verglastes Feld",
+        "value": {
+          "description": "Verglastes Feld",
+          "random": 1
+        } 
+      },
+      {
+        "group": "overgrown_ruin",
+        "label": "Überwucherte / Bröcklige Ruine",
+        "value": {
+          "description": "Überwucherte Ruine",
+          "random": 6
+        } 
+      },
+      {
+        "group": "decayed_ruin",
+        "label": "Verfallene Ruine",
+        "value": {
+          "description": "Verfallene Ruine",
+          "random": 4
+        } 
+      },
+      {
+        "group": "undamaged_buildings",
+        "label": "Unbeschädigte Gebäude",
+        "value": {
+          "description": "Unbeschädigte Gebäude",
+          "random": 4
+        } 
+      },
+      {
+        "group": "abandoned_industrial_facility",
+        "label": "Verlassene Industrieanlage",
+        "value": {
+          "description": "Verlassene Industrieanlage",
+          "random": 6
+        } 
+      },
+      {
+        "group": "city",
+        "label": "Siedlung",
+        "value": {
+          "description": "Siedlung",
+          "random": 2
+        } 
+      }
+    ]
+  }
+}

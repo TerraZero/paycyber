@@ -10,6 +10,7 @@ model FieldDefinition {
   id String @id
   label String
   type String
+  length Int @default(1)
   settings String @default("{}")
   fieldmaps FieldMap[]
 }
@@ -18,26 +19,30 @@ model FieldMap {
   id String @id
   label String 
   settings String @default("{}")
-  entitydefinition EntityDefinition @relation(fields: [entitydefinition_id], references: [id])
-  entitydefinition_id String
-  fielddefinition FieldDefinition @relation(fields: [fielddefinition_id], references: [id])
-  fielddefinition_id String
+  entitydefinition EntityDefinition @relation(fields: [entity], references: [id])
+  entity String
+  fielddefinition FieldDefinition @relation(fields: [field], references: [id])
+  field String
   fields Field[]
 }
 
 model Entity {
   id Int @id @default(autoincrement())
   label String
-  entitydefinition EntityDefinition @relation(fields: [entitydefinition_id], references: [id])
-  entitydefinition_id String
-  fields Field[]
+  entitydefinition EntityDefinition @relation(fields: [type], references: [id])
+  type String
+  fields Field[] @relation("host")
+  target Field[] @relation("reference")
 }
 
 model Field {
   id Int @id @default(autoincrement())
   fieldmap FieldMap @relation(fields: [fieldmap_id], references: [id])
   fieldmap_id String
-  entity Entity @relation(fields: [entity_id], references: [id])
+  entity Entity @relation(name: "host", fields: [entity_id], references: [id])
   entity_id Int
-  value String @default("{}")
+  json String? @default("{}")
+  value String?
+  reference Entity? @relation(name: "reference", fields: [reference_id], references: [id])
+  reference_id Int?
 }

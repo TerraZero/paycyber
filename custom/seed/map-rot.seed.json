@@ -1,0 +1,37 @@
+{
+  "demo": {
+    "config": {
+      "id": ["group", "type", "game"],
+      "json": ["value"],
+      "base": {
+        "default": {
+          "type": "map_option_rot",
+          "game": "myz"
+        }
+      }
+    },
+    "items": [
+      {
+        "group": "oasis",
+        "label": "Oase",
+        "value": {
+          "description": "Die Oase"
+        }
+      },
+      {
+        "group": "weak",
+        "label": "Schwache Fäulnis",
+        "value": {
+          "description": "Schwache Fäulnis"
+        }
+      },
+      {
+        "group": "strong",
+        "label": "Starke Fäulnis",
+        "value": {
+          "description": "Starke Fäulnis"
+        }
+      }
+    ]
+  }
+}

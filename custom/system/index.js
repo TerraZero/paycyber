@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import ZeroRoot from 'zero-system/src/ZeroRoot';
 import SystemCollector from 'zero-system/src/SystemCollector';
 import Storage from './modules/controller/Storage';
+import Models from './modules/controller/Models';
 
 const prisma = new PrismaClient();
 const app = Express();
@@ -18,25 +19,16 @@ export default {
 
 const root = new ZeroRoot(__dirname, app);
 
+//SystemCollector.debug = true;
+
 SystemCollector.addPath(Path.join(__dirname, 'modules/controller'));
+SystemCollector.addPath(Path.join(__dirname, 'modules/form'));
+SystemCollector.addPath(Path.join(__dirname, 'modules/utils'));
+SystemCollector.addPath(Path.join(__dirname, 'modules/menu'));
+SystemCollector.addPath(Path.join(__dirname, 'modules/demo'));
+
+SystemCollector.set('models', new Models());
 SystemCollector.set('storage', new Storage(prisma));
 
 root.boot();
 root.init();
-
-
-/*
-
-app.post('/model/type', async (req, res) => {
-  let prepare = {};
-  try {
-    const request = api.request(req, res);
-
-    await request.setResultItem(await api.modelStorage.getTypes());
-    await request.send();
-  } catch (e) {
-    res.send(await api.processError(e, prepare));
-  }
-});
-
-*/

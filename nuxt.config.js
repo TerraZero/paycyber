@@ -1,3 +1,6 @@
+import { resolve } from 'path';
+import { readFileSync } from 'fs';
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -16,20 +19,31 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
   },
 
   serverMiddleware: [
     '~/custom/system/index.js',
+    {
+      path: '/assets/d3-dice/ammo/ammo.wasm.wasm',
+      handler: (req, res, next) => {
+        const fileBuffer = readFileSync(resolve(__dirname, 'static/assets/3d-dice/ammo/ammo.wasm.wasm'));
+        res.setHeader('Content-Type', 'application/wasm');
+        return res.end(fileBuffer);
+      }
+    },
   ],
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '~/custom/styles/global.sass'
+    'element-ui/lib/theme-chalk/index.css',
+    '~/custom/styles/global.sass',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/element.plugin.js',
+    '~/plugins/request.plugin.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -43,6 +57,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '~/custom/modules/socket',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -53,9 +68,16 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config, ctx) {
+      config.module.rules.push({
+        test: /\.wasm$/,
+        type: 'webassembly/experimental'
+      });
+    },
   },
 
   server: {
     host: "0.0.0.0"
   },
+
 }

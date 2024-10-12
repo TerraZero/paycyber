@@ -1,35 +1,22 @@
 /**
- * @typedef {Object} T_EntitySchema
+ * @typedef {Object} T_FieldMapExtends
+ * @property {import('./Storage').T_FieldDefinition} storage
+ * @typedef {import('./Storage').T_FieldMap & T_FieldMapExtends} T_FieldMap
+ */ 
+
+/**
+ * @typedef {Object} T_EntityDef
  * @property {string} id
  * @property {string} label
  * @property {Object} settings
+ * @property {T_FieldMap[]} fields
  */
-
-/**
- * @typedef {Object} T_EntityDefinitionExtends
- * @property {T_FieldMap} fields
- * @typedef {T_EntitySchema & T_EntityDefinitionExtends} T_EntityDefinition
- */
-
-/**
- * @typedef {Object} T_FieldMapExtends
- * @property {string} entitydefinition_id
- * @property {string} fielddefinition_id
- * @property {T_FieldStorage} storage
- * @typedef {T_EntitySchema & T_FieldMapExtends} T_FieldMap
- */
-
-/**
- * @typedef {Object} T_FieldStorageExtends
- * @property {string} type
- * @typedef {T_EntitySchema & T_FieldStorageExtends} T_FieldStorage
- */ 
 
 module.exports = class Definition {
 
   /**
    * @param {import('./Storage')} storage 
-   * @param {T_EntityDefinition} definition 
+   * @param {T_EntityDef} definition 
    */
   constructor(storage, definition) {
     this.storage = storage;
@@ -41,7 +28,7 @@ module.exports = class Definition {
   }
 
   /**
-   * @returns {T_EntityDefinition}
+   * @returns {T_EntityDef}
    */
   getEntity() {
     return this.definition;
@@ -52,12 +39,12 @@ module.exports = class Definition {
    * @returns {T_FieldMap}
    */
   getField(field) {
-    return this.definition.fields.find(v => v.fielddefinition_id === field) ?? null;
+    return this.definition.fields.find(v => v.field === field) ?? null;
   }
 
   /**
    * @param {string} field 
-   * @returns {T_FieldStorage}
+   * @returns {import('./Storage').T_FieldDefinition}
    */
   getFieldStorage(field) {
     return this.getField(field)?.storage ?? null;
@@ -65,11 +52,19 @@ module.exports = class Definition {
 
   /**
    * @param {string} field 
+   * @returns {import('./FieldTypeBase')} 
+   */
+  getFieldType(field) {
+    return this.storage.getFieldType(this.getFieldStorage(field).type);
+  } 
+
+  /**
+   * @param {string} field 
    * @param {string} label 
    * @param {Object} settings 
-   * @param {T_FieldStorage} storage 
+   * @param {import('./Storage').T_FieldDefinition} storage 
    */
-  async addField(field, label = null, settings = {}, storage = null) {
+  async addField(field, label, settings = {}, storage = null) {
     return this.storage.inTransaction(async () => {
       if (this.getField(field) !== null) return false;
 
@@ -78,12 +73,17 @@ module.exports = class Definition {
       if (fieldDefinition === null && storage === null) {
         throw new Error('Field storage does not exist for field "' + field + '".');
       } else if (fieldDefinition === null) {
-        await this.storage.addFieldDefinition(field, storage.label, storage.type, storage.settings ?? {});
+        await this.storage.createFieldDefinition(storage);
         fieldDefinition = await this.storage.getFieldDefinition(field);
       }
 
       // create map
-      await this.storage.addFieldMap(this.getEntity().id, field, label ?? fieldDefinition.label, settings);
+      await this.storage.createFieldMap({
+        entity: this.getEntity().id,
+        field: field,
+        label: label,
+        settings: settings,
+      });
 
       // update definition
       const map = await this.storage.getFieldMap(this.getEntity().id + '__' + field);

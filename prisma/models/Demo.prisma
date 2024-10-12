@@ -1,0 +1,23 @@
+model Demo {
+  id Int @id @default(autoincrement())
+  game String
+  type String
+  label String
+  group String
+  value String @map("value_json") @default("{}") // [json]
+}
+
+model DemoState {
+  key String @id
+  tag String @default("default")
+  value String @map("value_json") @default("{}") // [json]
+}
+
+model DemoHistory {
+  id Int @id @default(autoincrement())
+  trigger String
+  subject String
+  message String
+  value String @map("value_json") @default("{}") // [json]
+  time DateTime @default(now())
+}
