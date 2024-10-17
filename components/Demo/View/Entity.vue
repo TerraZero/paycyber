@@ -1,6 +1,6 @@
 <template lang="pug">
 .demo-view-entity
-  component(v-if="comp", :is="comp", :entity="entity", :values="entity.values", :type="type", :options="options", v-on="$listeners")
+  component(v-if="comp", :is="comp", :entity="entity", :values="entity.values", :type="type", :options="options ?? {}", v-on="$listeners")
     template(v-for="(_, slotName) in $scopedSlots", v-slot:[slotName]="props")
       slot(:name="slotName", v-bind="props")
   .demo-view-entity__notice(v-else) Unknown Type: {{ entity.values.type }}
@@ -22,6 +22,14 @@ export default {
           return 'DemoViewPlayer';
         case 'battle.unit':
           return 'DemoViewUnit';
+        case 'screen.music':
+          return 'DemoViewMusic';
+        case 'screen.image':
+          return 'DemoViewImage';
+        case 'screen.music.collection':
+          return 'DemoViewMusicCollection';
+        case 'screen.image.collection':
+          return 'DemoViewImageCollection';
       }
       return false;
     },
@@ -34,8 +42,14 @@ export default {
           return 'Enemy';
         case 'battle.player':
           return 'Player';
-        case 'battle.unit':
-          return 'Unit';
+        case 'screen.music':
+          return 'Music';
+        case 'screen.image':
+          return 'Image';
+        case 'screen.music.collection':
+          return 'Music Collection';
+        case 'screen.image.collection':
+          return 'Image Collection';
       }
       return '<UNKNOWN-' + this.entity.values.type + '>';
     },

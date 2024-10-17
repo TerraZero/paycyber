@@ -4,7 +4,7 @@
   .demo-control-battle__middle
     .demo-control-battle__battle(v-if="battleItems && row.length")
       .demo-control-battle__battle-row
-        .demo-control-battle__row
+        .demo-control-battle__row(v-if="row")
           .demo-control-battle__row-item(v-for="item, key in row", :class="modi('row-item', { break: item.type === 'break', selected: item === selectedItem })", @click="onSelectItem(item)")
             .demo-control-battle__title
               .demo-control-battle__label(v-if="item.type !== 'break'") {{ getTarget(item).values.label }}
@@ -21,12 +21,12 @@
         ElButton(@click="onOrderChange(+2)") +2
         ElButton(type="danger") Beenden
     .demo-control-battle__list
-      .demo-control-battle__enemy(v-if="units", v-for="unit, index in units", :key="index", :class="modi('enemy', { selected: unit.states.selected })")
+      .demo-control-battle__enemy(v-if="units", v-for="unit, index in units", :key="index", :class="modi('enemy', { selected: false })")
         DemoViewEntity(:entity="unit", :options="{ controls: { attr: true, item: true } }")
           template(#controls)
             ElButtonGroup
               ElButton(type="danger", size="mini", icon="el-icon-close", @click="onDeleteUnit(unit)")
-              ElButton(size="mini", :icon="unit.values.value.enable ? 'el-icon-view' : 'el-icon-loading'", @click="onViewUnit(unit)")
+              ElButton(size="mini", :icon="unit.enable ? 'el-icon-view' : 'el-icon-loading'", @click="onViewUnit(unit)")
               ElButton(type="primary", size="mini", icon="el-icon-d-arrow-right")
   .demo-control-battle__sidebar
     .demo-control-battle__actions
@@ -52,6 +52,7 @@
 <script>
 import RandomUtil from '~/custom/frontend/RandomUtil';
 import ActiveEntity from '~/custom/system/modules/controller/ActiveEntity';
+import StateEntity from '~/custom/system/modules/controller/StateEntity';
 
 export default {
   async fetch() {
@@ -59,6 +60,7 @@ export default {
   },
   data() {
     return {
+      state: null,
       enemyTypes: null,
       players: null,
       units: null,
@@ -67,6 +69,7 @@ export default {
       health: '',
       startDialog: false,
       battleItems: null,
+      battleRow: null,
       selectedItem: null,
     };
   },
@@ -79,7 +82,7 @@ export default {
     },
 
     row() {
-      return this.battleItems.values.value.items;
+      return false;
     },  
 
   },
@@ -101,41 +104,14 @@ export default {
         game: 'myz',
         type: 'battle.player',
       });
-      this.units = await ActiveEntity.multi('Demo', {
-        game: 'myz',
-        type: 'battle.unit',
-      }, {
-        selected: false,
-      });
-      const battleRows = await ActiveEntity.multi('Demo', {
-        game: 'myz',
-        type: 'battle.row',
-      });
-      if (battleRows.length) {
-        this.battleItems = battleRows.shift();
-      } else {
-        this.battleItems = new ActiveEntity('Demo', {
-          game: 'myz',
-          type: 'battle.row',
-          label: 'Battle Row',
-          group: 'temp',
-          value: {
-            items: [],
-          },
-        });
-        this.battleItems.save();
-      }
+
+      this.state = await StateEntity.load('myz', 'battle.config', 'Battle Config', {
+        battleItems: [],
+        units: [],
+      }, this);
     },
 
     onSelectItem(item) {
-      if (item.type === 'unit') {
-        const target = this.getTarget(item);
-        target.states.selected = true;
-      }
-      if (this.selectedItem && this.selectedItem.type === 'unit') {
-        const selectTarget = this.getTarget(this.selectedItem);
-        selectTarget.states.selected = false;
-      }
       this.selectedItem = item;
     },
 
@@ -176,27 +152,23 @@ export default {
         };
       });
 
-      const entity = new ActiveEntity('Demo', {
-        game: 'myz',
+      this.units.push({
         type: 'battle.unit',
-        label: type.values.label,
-        group: 'battle',
-        value: {
-          target_game: type.values.game,
-          target_type: type.values.type,
-          target_id: type.values.group,
-          t_str: this.getRandomAttr(type.values.value.str),
-          t_dex: this.getRandomAttr(type.values.value.dex),
-          t_wit: this.getRandomAttr(type.values.value.wit),
-          t_emp: this.getRandomAttr(type.values.value.emp),
-          items: items,
-          enable: false,
-          init: 0,
-        },
+        target_game: type.values.game,
+        target_type: type.values.type,
+        target_id: type.values.group,
+        t_str: this.getRandomAttr(type.values.value.str),
+        t_dex: this.getRandomAttr(type.values.value.dex),
+        t_wit: this.getRandomAttr(type.values.value.wit),
+        t_emp: this.getRandomAttr(type.values.value.emp),
+        items: items,
+        enable: false,
+        init: 0,
       });
 
-      await entity.doSave();
-      this.update();
+      await this.state.up('units');
+
+      // this.update();
     },
 
     getRandomAttr(attr) {
@@ -315,8 +287,12 @@ export default {
     },
 
     onOrderChange(change) {
-      this.selectedItem.orderChange = change;
-      this.battleItems.save();
+      if (this.selectedItem === null) {
+        this.$message.warning('Please select an item.');
+      } else {
+        this.selectedItem.orderChange = change;
+        this.battleItems.save();
+      }
     },
 
     arrayMove(array, from, to) {

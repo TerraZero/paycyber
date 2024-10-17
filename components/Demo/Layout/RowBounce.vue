@@ -1,17 +1,19 @@
 <template lang="pug">
 transition-group.demo-layout-row-bounce(name="flip-list")
   .demo-layout-row-bounce__item(v-for="item, index in row", :key="item", :style="itemStyle(index)")
-    slot(:item="item", :index="index")
+    slot(:item="get(item)", :index="index")
 </template>
 
 <script>
+import StateEntity from '~/custom/system/modules/controller/StateEntity';
 
 export default {
 
-  props: ['items', 'max'],
+  props: ['id', 'items', 'max'],
 
   data() {
     return {
+      state: null,
       offset: 0,
       row: [],
       interval: null,
@@ -19,6 +21,13 @@ export default {
   },
 
   methods: {
+
+    async load() {
+      this.state = await StateEntity.load('myz', 'row.bounce.' + this.id, 'Row Bounce (' + this.id + ')', {
+        offset: 0,
+        row: [],
+      }, this);
+    },
 
     remove(index = 0) {
       this.items.splice(index, 1);
@@ -30,6 +39,10 @@ export default {
       } else {
         this.items.push(item);
       }
+    },
+
+    get(index) {
+      return this.items[index] ?? null;
     },
 
     itemStyle(index) {
@@ -44,9 +57,10 @@ export default {
       this.row = [];
       this.interval = setInterval(() => {
         if (this.row.length >= this.items.length || this.row.length >= this.max) {
-          clearInterval(this.interval); 
+          clearInterval(this.interval);
+          this.state.up();
         } else {
-          this.row.push(this.items[this.row.length]);
+          this.row.push(this.row.length);
         }
       }, 200);
     },
@@ -55,10 +69,11 @@ export default {
       const next = this.row.shift();
       this.offset++;
       if (this.offset + this.row.length < this.items.length) {
-        this.row.push(this.items[this.offset + this.row.length]);
+        this.row.push(this.offset + this.row.length);
       }
-      this.$emit('next', next);
-      return next ?? null;
+      this.state.up();
+      this.$emit('next', this.get(next));
+      return this.get(next) ?? null;
     },
 
   },

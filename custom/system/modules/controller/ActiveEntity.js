@@ -15,6 +15,21 @@ module.exports = class ActiveEntity {
 
   /**
    * @param {string} model 
+   * @param {Object} where 
+   * @param {Object} states 
+   * @returns {ActiveEntity}
+   */
+  static async single(model, where, states = {}) {
+    const loaded = await ActiveEntity.multi(model, where, states);
+    if (loaded.length) {
+      return loaded.shift();
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * @param {string} model 
    */
   constructor(model, values = {}) {
     this.model = model;

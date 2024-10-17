@@ -3,7 +3,7 @@
   .demo-myz-screen__background(:style="backgroundStyles")
   .demo-myz-screen__battle
     .demo-myz-screen__sidebar(@click.stop="onSidebar")
-    DemoLayoutRowBounce.demo-myz-screen__row(ref="row", :items="items", :max="11")
+    DemoLayoutRowBounce.demo-myz-screen__row(ref="row", id="screen.battle.row", :items="items", :max="11")
       template(#default="props")
         .demo-myz-screen__row-item(:style="rowItemStyle(props)")
           | {{ props.item }}
@@ -13,6 +13,7 @@
 import Request from '~/custom/frontend/Request';
 import Socket from '~/custom/system/Socket';
 import ActiveEntity from '~/custom/system/modules/controller/ActiveEntity';
+import StateEntity from '~/custom/system/modules/controller/StateEntity';
 
 export default {
 
@@ -34,6 +35,7 @@ export default {
 
   data() {
     return {
+      state: null,
       battleItems: null,
       background: 'https://c.wallhere.com/photos/1d/28/Auroa_ruins_drone_antenna_forest_mountains_concept_art_Tom_Clancy\'s_Ghost_Recon_Breakpoint-1663849.jpg!d',
       battle: false,
@@ -61,13 +63,17 @@ export default {
   methods: {
 
     async load() {
-      const battleRows = await ActiveEntity.multi('Demo', {
+      this.state = await StateEntity.load('myz', 'screen.config', 'Screen Config', {
+        battle: false,
+      }, this);
+
+      this.$refs.row.load();
+
+      this.battleItems = await ActiveEntity.single('Demo', {
         game: 'myz',
         type: 'battle.row',
       });
-      if (battleRows.length) {
-        this.battleItems = battleRows.shift();
-      } else {
+      if (this.battleItems === null) {
         this.battleItems = new ActiveEntity('Demo', {
           game: 'myz',
           type: 'battle.row',
@@ -81,6 +87,14 @@ export default {
       }
     },
 
+    setBattleMode(mode) {
+      this.battle = mode;
+      if (this.battle) {
+        this.$refs.row.intro();
+      }
+      this.state.up('battle');
+    },
+
     rowItemStyle({ index }) {
       const styles = {};
       if (index > 7) {
@@ -92,18 +106,16 @@ export default {
     onClick() {
       if (this.battle) {
         const next = this.$refs.row.next();
-        console.log(next);
         if (next === null) {
           this.$refs.row.intro();
         }
       } else {
-        this.battle = true;
-        this.$refs.row.intro();
+        this.setBattleMode(true);
       }
     },
 
     onSidebar() {
-      this.battle = false;
+      this.setBattleMode(false);
     },
 
   },

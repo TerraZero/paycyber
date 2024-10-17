@@ -37,6 +37,7 @@ export default {
 
   &__label
     background: #222
+    color: white
     border-radius: 4px
     border-top-right-radius: 0
     border-bottom-right-radius: 0
@@ -46,4 +47,5 @@ export default {
     align-items: center
     white-space: nowrap
     font-size: 14px
+
 </style>

@@ -5,6 +5,10 @@
       ElButton(type="primary", icon="el-icon-plus", @click="open('battle.player')") Add Player
       ElButton(type="primary", icon="el-icon-plus", @click="open('battle.enemy.type')") Add Enemy Type
       ElButton(type="primary", icon="el-icon-plus", @click="open('battle.enemy')") Add Enemy
+      ElButton(type="primary", icon="el-icon-plus", @click="open('screen.music')") Add Music
+      ElButton(type="primary", icon="el-icon-plus", @click="open('screen.music.collection')") Add Music Collection
+      ElButton(type="primary", icon="el-icon-plus", @click="open('screen.image')") Add Image
+      ElButton(type="primary", icon="el-icon-plus", @click="open('screen.image.collection')") Add Image Collection
   .demo-control-entity__filter
     DemoFormInput(v-model="filter", label="Filter")
     DemoFormSelect(v-model="type", :options="types", label="Type")
@@ -15,6 +19,10 @@
   DemoEntityEnemyTypeForm(ref="enemyTypeForm", @finish="update")
   DemoEntityEnemyForm(ref="enemyForm", @finish="update")
   DemoEntityPlayerForm(ref="playerForm", @finish="update")
+  DemoEntityMusicForm(ref="musicForm", @finish="update")
+  DemoEntityMusicCollectionForm(ref="musicCollectionForm", @finish="update")
+  DemoEntityImageForm(ref="imageForm", @finish="update")
+  DemoEntityImageCollectionForm(ref="imageCollectionForm", @finish="update")
 </template>
 
 <script>
@@ -36,6 +44,10 @@ export default {
         'battle.enemy.type': 'Enemy Type',
         'battle.enemy': 'Enemy',
         'battle.player': 'Player',
+        'screen.music': 'Music',
+        'screen.music.collection': 'Music Collection',
+        'screen.image': 'Image',
+        'screen.image.collection': 'Image Collection',
       },
     };
   },
@@ -83,6 +95,18 @@ export default {
         case 'battle.player':
           this.$refs.playerForm.open(entity);
           break;
+        case 'screen.music':
+          this.$refs.musicForm.open(entity);
+          break;
+        case 'screen.image':
+          this.$refs.imageForm.open(entity);
+          break;
+        case 'screen.music.collection':
+          this.$refs.musicCollectionForm.open(entity);
+          break;
+        case 'screen.image.collection':
+          this.$refs.imageCollectionForm.open(entity);
+          break;
       }
     },
 
@@ -91,6 +115,10 @@ export default {
         this.$refs.enemyTypeForm.close();
         this.$refs.playerForm.close();
         this.$refs.enemyForm.close();
+        this.$refs.musicForm.close();
+        this.$refs.musicCollectionForm.close();
+        this.$refs.imageForm.close();
+        this.$refs.imageCollectionForm.close();
       }
     },
 
@@ -98,7 +126,7 @@ export default {
       this.close();
       this.items = await ActiveEntity.multi('Demo', {
         game: 'myz',
-        type: { in: ['battle.player', 'battle.enemy.type', 'battle.enemy'] },
+        type: { in: ['battle.player', 'battle.enemy.type', 'battle.enemy', 'screen.music', 'screen.image', 'screen.music.collection', 'screen.image.collection'] },
       });
     },
 
