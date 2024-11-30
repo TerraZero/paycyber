@@ -1,8 +1,10 @@
 <template lang="pug">
-ElDialog.demo-entity-form-base(:title="title", :visible.sync="dialog", width="90%", :close-on-click-modal="false")
+ElDialog.demo-entity-form-base(:title="title", :visible.sync="dialog", width="90%", :close-on-click-modal="false", :class="classes")
   ElForm.demo-entity-form-base__form
     .demo-entity-form-base__fields
       slot
+    .demo-entity-form-base__sidebar(v-if="$slots.sidebar")
+      slot(name="sidebar")
   template(#footer)
     slot(name="actions")
       ElButton(type="primary", icon="el-icon-edit", @click="onSave") {{ deletable ? 'Save' : 'Create' }}
@@ -37,6 +39,13 @@ export default {
   },
 
   computed: {
+
+    classes() {
+      const classes = [];
+
+      if (this.$slots.sidebar) classes.push('sidebar');
+      return classes.map(v => 'demo-entity-form-base--' + v);
+    },
 
     deletable() {
       return this.entity && !this.entity.isNew;
@@ -141,6 +150,11 @@ export default {
   &__fields
     display: grid
     grid-template-columns: 1fr
+    gap: 1em
+
+  &--sidebar &__form
+    display: grid
+    grid-template-columns: 1fr max-content
     gap: 1em
 
   .el-dialog

@@ -1,4 +1,5 @@
 const ActiveEntity = require('./ActiveEntity');
+const Socket = require('~/custom/system/Socket').default;
 
 module.exports = class StateEntity {
 
@@ -20,6 +21,12 @@ module.exports = class StateEntity {
   }
 
   constructor(game, type, label, defaults = {}) {
+    if (this.socket === undefined) {
+      this.socket = null;
+      Socket.get((socket) => {
+        this.socket = socket;
+      });
+    }
     this.game = game;
     this.type = type;
     this.label = label;
@@ -27,6 +34,14 @@ module.exports = class StateEntity {
     this._entity = null;
     this._mount = null;
     this._map = {};
+  }
+
+  get socket() {
+    return this.constructor._socket;
+  }
+
+  set socket(value) {
+    this.constructor._socket = value;
   }
 
   mount(mount, map = {}) {
@@ -57,15 +72,22 @@ module.exports = class StateEntity {
     return this._entity.values.value;
   }
 
-  async save() {
+  async save(info = {}) {
     await this._entity.save();
+    this.socket.request('entity:state', {
+      values: this._entity.values,
+      info,
+    });
   }
 
   async update(values = {}) {
     for (const field in values) {
       this.values[field] = values[field];
     }
-    await this.save();
+    await this.save({
+      op: 'update',
+      values,
+    });
   }
 
   async up(...fields) {
@@ -78,7 +100,10 @@ module.exports = class StateEntity {
         this.values[field] = this._mount[this._map[field] ?? field];
       }
     }
-    await this.save();
+    await this.save({
+      op: 'up',
+      fields,
+    });
   }
 
   down(...fields) {

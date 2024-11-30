@@ -67,5 +67,23 @@ module.exports = class RandomUtil {
   static generateSectorsInt(count, size = 100, min = 1) {
     return this.generateSectors(count, size).map(v => Math.max(min, Math.round(v)));
   }
+
+  static shuffleArray(array, fixFirstItem = false) {
+    const lastItem = array[array.length - 1];
+    for (let i = array.length - 1; i >= 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    // the last item before shuffle should not be the first item after shuffle
+    if (fixFirstItem && array[0] === lastItem) {
+      const j = Math.floor(Math.random() * (array.length - 1)) + 1;
+      [array[0], array[j]] = [array[j], array[0]];
+    }
+    return array;
+  }
+
+  static getRandomIndexArray(array) {
+    return this.shuffleArray(Object.keys(array)).map(v => parseInt(v));
+  }
  
 }

@@ -4,6 +4,8 @@ DemoEntityFormBase.demo-entity-music-collection-form(ref="base", title="Music Co
   DemoFormInput(label="ID", v-model="group", :disabled="entity && !entity.isNew")
   DemoFormRefEntity(label="Teaser", v-model="teaser", type="screen.image", game="myz", :max="1")
   DemoFormRefEntity(label="Musics", v-model="musics", field="id", type="screen.music", game="myz")
+  template(#sidebar)
+    DemoFormCheckboxes(label="Properties", v-model="properties", :options="propertiesOptions", mode="props")
 </template>
 
 <script>
@@ -14,9 +16,14 @@ export default {
 
   data() {
     return {
+      propertiesOptions: {
+        loop: 'Loop',
+        shuffle: 'Shuffle',
+      },
       entity: null,
       label: '',
       group: '',
+      properties: {},
       teaser: [],
       musics: [],
     };
@@ -29,6 +36,7 @@ export default {
       entity.values.group = this.group;
       entity.values.value.teaser = this.teaser;
       entity.values.value.musics = this.musics;
+      entity.values.value.properties = this.properties;
     },
 
     unpack(entity) {
@@ -36,6 +44,7 @@ export default {
       this.group = entity.values.group ?? '';
       this.teaser = entity.values.value.teaser ?? [];
       this.musics = entity.values.value.musics ?? [];
+      this.properties = entity.values.value.properties ?? {};
     },
 
   },

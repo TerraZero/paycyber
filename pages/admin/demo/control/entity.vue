@@ -45,6 +45,7 @@ export default {
         'battle.enemy': 'Enemy',
         'battle.player': 'Player',
         'screen.music': 'Music',
+        'screen.music:sound': 'Music (Sound)',
         'screen.music.collection': 'Music Collection',
         'screen.image': 'Image',
         'screen.image.collection': 'Image Collection',
@@ -64,7 +65,9 @@ export default {
 
       return items.filter(v => {
         if (this.type || this.filter) {
-          if (this.type && v.values.type !== this.type) return false;
+          if (this.type === 'screen.music:sound') {
+            if (v.values.type !== 'screen.music' || !v.values.value.properties?.sound) return false;
+          } else if (this.type && v.values.type !== this.type) return false;
           if (this.filter && !(v.values.label.includes(this.filter) || v.values.group.includes(this.filter))) return false;
         } 
         return true;
@@ -141,15 +144,18 @@ export default {
   overflow: hidden
   padding: 1em
   box-sizing: border-box
+  display: grid
+  grid-template-rows: min-content min-content 1fr
 
   &__controls
     padding-bottom: 1em
 
   &__list
     display: grid
-    grid-template-columns: repeat(auto-fit, minmax(200px, 300px))
+    grid-template-columns: var(--element-grid--items)
     gap: 1em
     padding-bottom: 1em
+    overflow: auto
 
   &__item
     background: #333

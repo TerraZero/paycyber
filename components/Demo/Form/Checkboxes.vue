@@ -1,26 +1,35 @@
 <template lang="pug">
-.demo-form-checkboxes
+.demo-form-checkboxes(:class="classes")
   .demo-form-checkboxes__label {{ label }}
   .demo-form-checkboxes__group
-    ElCheckbox(v-for="option, index in options", :key="index") {{ option }}
+    ElCheckbox.demo-form-checkboxes__checkbox(v-for="option, index in options", :key="index", v-model="value[index]", @input="onInput(index, $event)") {{ option }}
 </template>
   
 <script>  
-import Util from '~/custom/system/modules/utils/Util';
-
 export default {
-  props: ['label', 'value', 'options'],
-  computed: {
-    
-    props() {
-      const props = Util.copy(this.$props || {});
+  
+  props: ['label', 'value', 'options', 'mode'],
 
-      delete props.label;
-      delete props.options;
-      return props;
+  computed: {
+
+    classes() {
+      const classes = [];
+
+      if (this.mode) classes.push(this.mode);
+      return classes.map(v => 'demo-form-checkboxes--' + v);
     },
 
   },
+
+  methods: {
+
+    onInput(index, value) {
+      this.value[index] = value;
+      this.$emit('input', this.value);
+    },
+
+  },
+
 };
 </script>
 
@@ -28,22 +37,39 @@ export default {
 .demo-form-checkboxes
   display: flex
 
-  &__input
-    width: 100%
-
-  &__input .el-input__inner
-    border-top-left-radius: 0
-    border-bottom-left-radius: 0
+  &--props
+    flex-wrap: wrap
 
   &__label
     background: #222
-    border-radius: 4px
-    border-top-right-radius: 0
-    border-bottom-right-radius: 0
-    padding: 0 20px
-    display: flex
-    justify-content: center
-    align-items: center
     white-space: nowrap
     font-size: 14px
+    border-radius: var(--element-radius--left)
+    color: var(--demo-form--label-color, white)
+    padding: 12px 20px
+
+  &--props &__label
+    width: 100%
+    border-radius: var(--element-radius--top)
+
+  &__group
+    display: flex
+    gap: 1em
+    justify-content: flex-start
+    align-items: center
+    padding: 0 1em
+    box-sizing: border-box
+
+  &--props &__group
+    background: #282828
+    width: 100%
+    padding: 1em
+    border-radius: var(--element-radius--bottom)
+
+  &__checkbox
+    margin: 0
+
+  & .el-checkbox__label
+    color: white
+
 </style>
