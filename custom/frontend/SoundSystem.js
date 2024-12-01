@@ -147,12 +147,21 @@ module.exports = class SoundSystem {
    */
   stop(item = null) {
     if (item === null) {
+      this.stopPlaylist();
       for (const id in this._plugins) {
         this._plugins[id].stop();
       }
       return null;
     }
     return this.getPlugin(item.plugin).stop(item);
+  }
+
+  stopPlaylist() {
+    this._playlist.stop();
+    const current = this._playlist.current();
+    if (current !== null) {
+      this.stop(current);
+    }
   }
 
   /**
@@ -182,7 +191,8 @@ module.exports = class SoundSystem {
     this._playlist
       .setLoop(config.loop ?? false)
       .setShuffle(config.shuffle ?? false)
-      .setItems(playlist);
+      .setItems(playlist)
+      .play();
     this.next();
   }
 

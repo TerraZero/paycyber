@@ -31,6 +31,7 @@ export default {
     SoundSystem.initYoutube(this.$refs.video);
     Socket.get((socket) => {
       socket.subscribe(this, 'entity:state', ({ values, info }) => {
+        this.log('entity:state', values, info);
         if (values.type === 'screen.config.simple') {
           if (info.fields.includes('images')) {
             this.setSlides(values.value.images);
@@ -41,6 +42,7 @@ export default {
         }
       });
       socket.subscribe(this, 'control:sound', ({ action, sound }) => {
+        this.log('control:sound', action, sound);
         if (sound.value.properties.video) {
           this.setIntro(sound);
         } else {
@@ -54,9 +56,8 @@ export default {
         }
       });
       socket.subscribe(this, 'control:stop', () => {
-        this.intro.stop();
-        SoundSystem.stop();
-        this.focus = 'slider';
+        this.log('control:stop');
+        this.stop();
       });
     });
   },
@@ -89,7 +90,15 @@ export default {
 
   methods: {
 
+    log(...messages) {
+      console.log('Control: ', ...messages);
+    },
+
     setSlides(images) {
+      if (this.focus === 'intro') {
+        this.stop();
+      }
+      this.focus = 'slider';
       const slides = [];
       
       for (const image of images) {
@@ -111,11 +120,18 @@ export default {
     },  
 
     setIntro(sound) {
+      this.stop();
       this.intro.once('cued', () => {
         this.intro.play();
       });
       this.intro.load(sound.value.src);
       this.focus = 'intro';
+    },
+
+    stop() {
+      this.intro.stop();
+      SoundSystem.stop();
+      this.focus = 'slider';
     },
 
   },

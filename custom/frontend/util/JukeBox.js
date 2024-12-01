@@ -3,11 +3,22 @@ const RandomUtil = require('../RandomUtil');
 module.exports = class JukeBox {
 
   constructor() {
-    this.items = null;
+    this.items = [];
     this.nextIndex = [];
     this.index = -1;
     this.loop = false;
     this.shuffle = false;
+    this.stopped = false;
+  }
+
+  play() {
+    this.stopped = false;
+    return this;
+  }
+
+  stop() {
+    this.stopped = true;
+    return this;
   }
 
   setItems(items) {
@@ -48,6 +59,7 @@ module.exports = class JukeBox {
   }
 
   key() {
+    if (this.stopped) return null;
     if (this.index >= this.nextIndex.length) {
       return null;
     }
@@ -55,11 +67,13 @@ module.exports = class JukeBox {
   }
 
   current() {
+    if (this.stopped) return null;
     const key = this.key();
     return key === null ? null : (this.items[key] ?? null);
   }
 
   nextKey() {
+    if (this.stopped) return null;
     this.index = (this.index + 1);
     if (this.index >= this.nextIndex.length) {
       if (this.loop) {
@@ -71,6 +85,7 @@ module.exports = class JukeBox {
   }
 
   next() {
+    if (this.stopped) return null;
     this.nextKey();
     return this.current();
   }
