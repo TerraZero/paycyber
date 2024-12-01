@@ -90,7 +90,7 @@ module.exports = class YoutubeSystem {
    * @param {import('../SoundSystem').T_SoundItem} item 
    * @returns {import('../SoundSystem').T_SoundItem}
    */
-  stop(item) {
+  stop(item = null) {
     if (this.isPlaying()) {
       this.playing = false;
       this.player.pause();

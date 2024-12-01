@@ -21,6 +21,11 @@
             ElButtonGroup.demo-control-simple__controls
               ElButton.demo-control-simple__icon(icon="el-icon-video-play", size="mini", type="primary", @click="onPlayPlaylist(music)")
     .demo-control-simple__sounds
+      .demo-control-simple__sound
+        .demo-control-simple__fake
+        | STOP
+        .demo-control-simple__sound-controls
+          .demo-control-simple__sound-play.el-icon-video-play(@click="onStop")
       .demo-control-simple__sound(v-for="sound in soundsFiltered")
         ElImage.demo-control-simple__sound-image(:src="sound.values.value.image", fit="contain")
         | {{ sound.values.label }}
@@ -97,8 +102,8 @@ export default {
 
     soundsFiltered() {
       if (Array.isArray(this.sounds)) {
-        return this.sounds.filter(v => v.values.value.properties.sound);
-      } 
+        return this.sounds.filter(v => v.values.value.properties.sound || v.values.value.properties.video);
+      }
       return [];
     },
 
@@ -153,6 +158,12 @@ export default {
       Socket.get().request('control:sound', {
         action: 'toggle',
         sound: sound.values,
+      });
+    },
+
+    onStop() {
+      Socket.get().request('control:stop', {
+        target: 'all',
       });
     },
 

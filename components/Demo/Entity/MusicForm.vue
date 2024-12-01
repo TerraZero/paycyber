@@ -30,6 +30,7 @@ export default {
       propertiesOptions: {
         sound: 'Sound',
         loop: 'Loop',
+        video: 'Video',
       },
       entity: null,
       label: '',
@@ -45,6 +46,17 @@ export default {
   },
 
   methods: {
+
+    validate(entity) {
+      let reason = false;
+      if (typeof (reason = FormBase.methods.validate(entity)) === 'string') {
+        return reason;
+      }
+      if (entity.values.value.src.length === 0) {
+        return 'The source is required.';
+      }
+      return true;
+    },
 
     pack(entity) {
       entity.values.label = this.label;

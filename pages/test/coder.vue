@@ -26,7 +26,7 @@
 </template>
 
 <script>
-const paycyber = require('../../../cards/src/info/paycyber.json');
+// const paycyber = require('../../../cards/src/info/paycyber.json');
 
 export default {
   data() {
@@ -222,7 +222,8 @@ export default {
       return field;
     },
     getImage(card) {
-      return require('../../../cards/dest/img/icons/' + card.icon + '.png');
+      return null;
+      // return require('../../../cards/dest/img/icons/' + card.icon + '.png');
     },
     newTray(card) {
       if (card.count) {

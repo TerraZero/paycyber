@@ -56,13 +56,20 @@ module.exports = class HowlerSystem {
 
   /**
    * @param {import('../SoundSystem').T_SoundItem} item 
-   * @returns {import('../SoundSystem').T_SoundItem}
+   * @returns {(import('../SoundSystem').T_SoundItem|import('../SoundSystem').T_SoundItem[])}
    */
-  stop(item) {
-    const howl = this.item(item);
+  stop(item = null) {
+    if (item === null) {
+      for (const id in this._items) {
+        this._items[id].stop();
+      }
+      return this._items;
+    } else {
+      const howl = this.item(item);
     
-    howl.stop();
-    return howl;
+      howl.stop();
+      return howl;
+    }
   }
 
   /**

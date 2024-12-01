@@ -13,7 +13,8 @@ export default {
   props: ['card'],
   computed: {
     image() {
-      return require('../../../cards/dest/img/icons/' + this.card.icon + '.png');
+      return;
+      // return require('../../../cards/dest/img/icons/' + this.card.icon + '.png');
     },
     imageStyle() {
       const styles = {};

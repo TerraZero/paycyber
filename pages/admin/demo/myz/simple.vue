@@ -1,12 +1,14 @@
 <template lang="pug">
 .demo-myz-simple(:class="classes")
-  ToolPersistentSlider(ref="slider")
+  .demo-myz-simple__intro(ref="intro")
+  ToolPersistentSlider.demo-myz-simple__slider(ref="slider")
   .demo-myz-simple__video(ref="video")
 </template>
 
 <script>
 import Socket from '~/custom/system/Socket';
 import SoundSystem from '~/custom/frontend/SoundSystem';
+import YTPlayer from 'yt-player';
 
 function getSoundItem(musicItem, id = 'base') {
   return {
@@ -25,6 +27,7 @@ function getSoundItem(musicItem, id = 'base') {
 export default {
 
   mounted() {
+    this.intro = new YTPlayer(this.$refs.intro);
     SoundSystem.initYoutube(this.$refs.video);
     Socket.get((socket) => {
       socket.subscribe(this, 'entity:state', ({ values, info }) => {
@@ -38,19 +41,35 @@ export default {
         }
       });
       socket.subscribe(this, 'control:sound', ({ action, sound }) => {
-        const item = getSoundItem(sound, 'sound');
-
-        if (SoundSystem.isPlaying(item)) {
-          SoundSystem.stop(item);
+        if (sound.value.properties.video) {
+          this.setIntro(sound);
         } else {
-          SoundSystem.play(item);
+          const item = getSoundItem(sound, 'sound');
+
+          if (SoundSystem.isPlaying(item)) {
+            SoundSystem.stop(item);
+          } else {
+            SoundSystem.play(item);
+          }
         }
+      });
+      socket.subscribe(this, 'control:stop', () => {
+        this.intro.stop();
+        SoundSystem.stop();
+        this.focus = 'slider';
       });
     });
   },
 
   beforeDestroy() {
     Socket.get().unsubscribe(this);
+  },
+
+  data() {
+    return {
+      focus: 'slider',
+      intro: null,
+    };
   },
 
   computed: {
@@ -62,6 +81,7 @@ export default {
     classes() {
       const classes = [];
 
+      classes.push('focus-' + this.focus);
       return classes.map(v => 'demo-myz-simple--' + v);
     },
 
@@ -90,6 +110,14 @@ export default {
       SoundSystem.playlist(playlist, musics.config);
     },  
 
+    setIntro(sound) {
+      this.intro.once('cued', () => {
+        this.intro.play();
+      });
+      this.intro.load(sound.value.src);
+      this.focus = 'intro';
+    },
+
   },
 
 }
@@ -102,9 +130,21 @@ export default {
   overflow: hidden
   position: relative
 
+  &__slider
+    background: black
+
+  &__intro,
   &__video
     position: absolute
     top: 0
     left: 0
+    width: 100%
+    height: 100%
+
+  &--focus-intro &__intro
+    z-index: 1000
+
+  &--focus-slider &__slider
+    z-index: 1000
 
 </style>

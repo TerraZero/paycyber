@@ -67,7 +67,7 @@ module.exports = class SoundSystem {
    * @param {T_SoundItem} item 
    * @returns 
    */
-  static stop(item) {
+  static stop(item = null) {
     return this.get().stop(item);
   }
 
@@ -145,7 +145,13 @@ module.exports = class SoundSystem {
    * @param {T_SoundItem} item 
    * @returns 
    */
-  stop(item) {
+  stop(item = null) {
+    if (item === null) {
+      for (const id in this._plugins) {
+        this._plugins[id].stop();
+      }
+      return null;
+    }
     return this.getPlugin(item.plugin).stop(item);
   }
 
