@@ -96,3 +96,5 @@ sw.*
 !/prisma/migrations/migration_lock.toml
 /static/*
 /public
+/custom/font/*
+!/custom/font/.gitkeep
