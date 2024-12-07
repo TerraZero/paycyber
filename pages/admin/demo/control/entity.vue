@@ -46,6 +46,7 @@ export default {
         'battle.player': 'Player',
         'screen.music': 'Music',
         'screen.music:sound': 'Music (Sound)',
+        'screen.music:video': 'Music (Video)',
         'screen.music.collection': 'Music Collection',
         'screen.image': 'Image',
         'screen.image.collection': 'Image Collection',
@@ -67,6 +68,8 @@ export default {
         if (this.type || this.filter) {
           if (this.type === 'screen.music:sound') {
             if (v.values.type !== 'screen.music' || !v.values.value.properties?.sound) return false;
+          } else if (this.type === 'screen.music:video') {
+            if (v.values.type !== 'screen.music' || !v.values.value.properties?.video) return false;
           } else if (this.type && v.values.type !== this.type) return false;
           if (this.filter && !(v.values.label.includes(this.filter) || v.values.group.includes(this.filter))) return false;
         } 

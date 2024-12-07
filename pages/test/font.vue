@@ -44,7 +44,7 @@ export default {
     left: 0
     width: 100%
     height: 100%
-    background: url('https://cdn.midjourney.com/f0944a5c-3bfc-4eea-b016-017fcaebed2d/0_3.png')
+    background: url('https://cdn.midjourney.com/61b8d72b-05ea-4b20-8bf1-d86e2e53bf5a/0_0.png')
     background-size: cover
     background-position: top center
     opacity: .5
@@ -117,7 +117,7 @@ export default {
   0% 
     filter: contrast(200%) saturate(200%) brightness(150%) blur(0px) grayscale(30%)
   20%
-    filter: contrast(150%) saturate(200%) brightness(200%) blur(1px) grayscale(30%)
+    filter: contrast(150%) saturate(200%) brightness(250%) blur(1px) grayscale(30%)
   40%
     filter: contrast(170%) saturate(150%) brightness(150%) blur(0px) grayscale(30%)
   60%
