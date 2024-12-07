@@ -3,7 +3,7 @@
   component(v-if="comp", :is="comp", :entity="entity", :values="entity.values", :type="type", :options="options ?? {}", v-on="$listeners")
     template(v-for="(_, slotName) in $scopedSlots", v-slot:[slotName]="props")
       slot(:name="slotName", v-bind="props")
-  .demo-view-entity__notice(v-else) Unknown Type: {{ entity.values.type }}
+  .demo-view-entity__notice(v-else) Unknown Type: {{ entity?.values.type }}
 </template>
 
 <script>
@@ -13,7 +13,7 @@ export default {
   computed: {
 
     comp() {
-      switch (this.entity.values.type) {
+      switch (this.entity?.values.type) {
         case 'battle.enemy.type':
           return 'DemoViewEnemyType';
         case 'battle.enemy':
@@ -35,7 +35,7 @@ export default {
     },
 
     type() {
-      switch (this.entity.values.type) {
+      switch (this.entity?.values.type) {
         case 'battle.enemy.type':
           return 'Enemy Type';
         case 'battle.enemy':
@@ -51,7 +51,7 @@ export default {
         case 'screen.image.collection':
           return 'Image Collection';
       }
-      return '<UNKNOWN-' + this.entity.values.type + '>';
+      return '<UNKNOWN-' + this.entity?.values.type + '>';
     },
 
   },

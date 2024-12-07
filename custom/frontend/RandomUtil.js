@@ -75,7 +75,7 @@ module.exports = class RandomUtil {
       [array[i], array[j]] = [array[j], array[i]];
     }
     // the last item before shuffle should not be the first item after shuffle
-    if (fixFirstItem && array[0] === lastItem) {
+    if (fixFirstItem && array[0] === lastItem && array.length > 1) {
       const j = Math.floor(Math.random() * (array.length - 1)) + 1;
       [array[0], array[j]] = [array[j], array[0]];
     }

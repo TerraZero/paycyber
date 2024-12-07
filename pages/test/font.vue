@@ -80,6 +80,7 @@ export default {
     color: #ffef02
     text-shadow: .2vw .2vw #4bbbe1
     margin-right: 2vw
+    letter-spacing: .5vw
 
   &__cyber
     font: var(--font--cyber)
@@ -88,7 +89,7 @@ export default {
     text-shadow: .2vw .2vw #4bbbe1
 
   &__line-sep
-    background: url('/cyber/horizontalRule.svg') no-repeat center center
+    background: url('/media/demo/paycyber/assets/horizontalRule.svg') no-repeat center center
     filter: drop-shadow(0 0 2vw #ffef02)
     animation: page-test-font__drop-color 5s infinite alternate linear
 

@@ -18,6 +18,7 @@ module.exports = class YoutubeSystem {
     this.current = null;
     this.loaded = false;
     this.playing = false;
+    this.stopTimeout = null;
 
     this.player.on('cued', () => {
       this.loaded = true;
@@ -51,7 +52,8 @@ module.exports = class YoutubeSystem {
    * @returns {import('../SoundSystem').T_SoundItem}
    */
   load(item) {
-    if (this.current?.path !== item.path) {
+    if (this.current?.path !== item.path || this.current?.config.start !== item.config.start) {
+      console.log('yt load', item);
       this.current = item;
       this.loaded = false;
       this.playing = false;
@@ -94,6 +96,8 @@ module.exports = class YoutubeSystem {
     if (this.isPlaying()) {
       this.playing = false;
       this.player.pause();
+      clearTimeout(this.stopTimeout);
+      this.stopTimeout = null;
       this.system.events.emit('end', {
         trigger: 'end',
         item: this.current,
@@ -112,9 +116,11 @@ module.exports = class YoutubeSystem {
       if (!this.isPlaying()) {
         this.player.seek(item.config.start ?? 0);
         if (item.config.end) {
-          setTimeout(() => {
+          const end = parseInt(item.config.end);
+          clearTimeout(this.stopTimeout);
+          this.stopTimeout = setTimeout(() => {
             this.stop(item);
-          }, (item.config.end - item.config?.start ?? 0) * 1000);
+          }, (end - item.config?.start ?? 0) * 1000);
         }
       }
       this.onChange('volume');

@@ -31,6 +31,7 @@ export default {
         sound: 'Sound',
         loop: 'Loop',
         video: 'Video',
+        logo: 'Logo',
       },
       entity: null,
       label: '',

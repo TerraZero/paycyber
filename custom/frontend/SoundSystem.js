@@ -171,6 +171,7 @@ module.exports = class SoundSystem {
     for (const plugin in this._plugins) {
       this._plugins[plugin].onChange(prop);
     }
+    this.events.emit('change', { system: this, prop });
   }
 
   /**
@@ -188,6 +189,7 @@ module.exports = class SoundSystem {
   }
 
   playlist(playlist, config = {}) {
+    this.stopPlaylist();
     this._playlist
       .setLoop(config.loop ?? false)
       .setShuffle(config.shuffle ?? false)
@@ -198,6 +200,7 @@ module.exports = class SoundSystem {
 
   next() {
     const current = this._playlist.current();
+    console.log('SoundSystem next current', current);
     if (current !== null) {
       this.stop(current);
     }

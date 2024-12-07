@@ -2,6 +2,7 @@
 .demo-control-simple
   .demo-control-simple__content
     .demo-control-simple__top
+      DemoFormSlider(label="Volume", v-model="volume", :min="0", :max="100", @input="debounceMasterVolumeChange")
     .demo-control-simple__bottom
       .demo-control-simple__left
         .demo-control-simple__image(v-for="image in sliders", :key="image.values.group")
@@ -34,11 +35,16 @@
 </template>
 
 <script>
+import Timing from '~/custom/frontend/util/Timing';
 import Socket from '~/custom/system/Socket';
 import ActiveEntity from '~/custom/system/modules/controller/ActiveEntity';
 import StateEntity from '~/custom/system/modules/controller/StateEntity';
 
 export default {
+
+  created() {
+    this.debounceMasterVolumeChange = Timing.debounce(this.onMasterVolumeChange.bind(this), 200);
+  },
 
   mounted() {
     Socket.get((socket) => {
@@ -83,6 +89,8 @@ export default {
 
   data() {
     return {
+      debounceMasterVolumeChange: null,
+      volume: 100,
       state: null,
       sounds: null,
       musics: null,
@@ -164,6 +172,12 @@ export default {
     onStop() {
       Socket.get().request('control:stop', {
         target: 'all',
+      });
+    },
+
+    onMasterVolumeChange(volume) {
+      Socket.get().request('control:sound:volume', {
+        volume,
       });
     },
 
