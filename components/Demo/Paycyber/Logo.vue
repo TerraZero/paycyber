@@ -77,7 +77,7 @@ export default {
   &__sdd
     --demo-paycyber-logo--color: #ed1f24
     --demo-paycyber-logo--color-shadow: red
-    --demo-paycyber-logo--color-shadow-glitch: #ff000220
+    --demo-paycyber-logo--color-shadow-glitch: #ff000240
     font: var(--font--sdd)
     font-size: 10vw
     color: var(--demo-paycyber-logo--color)
@@ -88,7 +88,7 @@ export default {
   &--alt &__sdd
     --demo-paycyber-logo--color: #4bbbe1
     --demo-paycyber-logo--color-shadow: white
-    --demo-paycyber-logo--color-shadow-glitch: #ffef0220
+    --demo-paycyber-logo--color-shadow-glitch: #ffef0240
 
   &--glitch &__sdd
     animation: demo-paycyber-logo__show-glitch-animation 20s forwards, demo-paycyber-logo__subtitle-glitch 2s infinite steps(1)

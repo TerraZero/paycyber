@@ -6,12 +6,18 @@
       DemoPaycyberLogo(:subtitle="introText", :show="introShow", :alt="introAlt", :glitch="introGlitch", :hide="introHide")
   ToolPersistentSlider.demo-myz-simple__slider(ref="slider")
   .demo-myz-simple__video(ref="video")
+  .demo-myz-simple__quests
+    .demo-myz-simple__quests-content
+      .demo-myz-simple__quest(v-for="quest in questFilter", :key="quest") {{ quest }}
+  .demo-myz-simple__level
+    | {{ level }}
 </template>
 
 <script>
 import Socket from '~/custom/system/Socket';
 import SoundSystem from '~/custom/frontend/SoundSystem';
 import YTPlayer from 'yt-player';
+import StateEntity from '~/custom/system/modules/controller/StateEntity';
 
 function getSoundItem(musicItem, id = 'base') {
   return {
@@ -43,6 +49,8 @@ export default {
       if (!this.currentIntro) return;
       if (this.currentIntro.value.properties.loop) {
         this.intro.play();
+      } else {
+        this.introHideVideo = true;
       }
     });
 
@@ -56,6 +64,22 @@ export default {
           }
           if (info.fields.includes('musics')) {
             this.setPlaylist(values.value.musics);
+          }
+          if (info.fields.includes('quests')) {
+            this.setQuests(values.value.quests);
+          }
+          if (info.fields.includes('questShow')) {
+            this.questShow = values.value.questShow;
+          }
+          if (info.fields.includes('level')) {
+            this.levelHighlight = false;
+            this.levelIntense = values.value.level;
+            setTimeout(() => {
+              this.levelHighlight = true;
+            }, 100);
+            setTimeout(() => {
+              this.level = values.value.level;
+            }, 600);
           }
         }
       });
@@ -82,6 +106,16 @@ export default {
         SoundSystem.get().volume(volume / 100);
       });
     });
+
+    StateEntity.load('myz', 'screen.config.simple', 'Screen Config - Simple', {
+      musics: [],
+      images: [],
+      quests: ['', '', '', '', ''],
+      questShow: false,
+      level: 0,
+    }, this).then(() => {
+      this.levelIntense = this.level;
+    });
   },
 
   beforeDestroy() {
@@ -90,6 +124,11 @@ export default {
 
   data() {
     return {
+      quests: [],
+      questShow: false,
+      level: 0,
+      levelIntense: 0,
+      levelHighlight: false,
       focus: 'slider',
       intro: null,
       currentIntro: null,
@@ -99,6 +138,7 @@ export default {
       introShow: false,
       introGlitch: false,
       introHide: false,
+      introHideVideo: false,
     };
   },
 
@@ -113,7 +153,20 @@ export default {
 
       classes.push('focus-' + this.focus);
       if (this.introLogo) classes.push('logo');
+      if (this.introHideVideo) classes.push('hide-video');
+      if (this.questShow) classes.push('quests');
+      if (this.levelIntense > 0) classes.push('level', 'level-' + this.levelIntense);
+      if (this.levelHighlight) classes.push('level-highlight');
       return classes.map(v => 'demo-myz-simple--' + v);
+    },
+
+    questFilter() {
+      const filtered = [];
+      for (const quest of this.quests) {
+        if (!quest) continue;
+        filtered.push(quest);
+      }
+      return filtered;
     },
 
   },
@@ -149,6 +202,10 @@ export default {
       SoundSystem.playlist(playlist, musics.config);
     },  
 
+    setQuests(quests) {
+      this.quests = quests;
+    },
+
     setIntro(sound) {
       this.stop();
       this.intro.once('cued', () => {
@@ -158,6 +215,7 @@ export default {
         this.introLogo = sound.value.properties.logo ?? false;
         this.introAlt = true;
         this.introGlitch = false;
+        this.introHideVideo = false;
         setTimeout(() => {
           this.introShow = true;
           this.intro.play();
@@ -212,6 +270,13 @@ export default {
     width: 100%
     height: 100%
 
+  &__intro-video
+    opacity: 1
+    transition: opacity .3s ease-in-out
+
+  &--hide-video &__intro-video
+    opacity: 0
+
   &--logo &__intro-video
     filter: contrast(106%) saturate(100%) brightness(300%) blur(1px) grayscale(30%) sepia(30%)
 
@@ -231,5 +296,96 @@ export default {
 
   &--focus-slider &__slider
     z-index: 1000
+
+  &__quests
+    position: absolute
+    top: 4vw
+    right: calc(8vw - 100vw)
+    color: #ffef02
+    z-index: 1000
+    font: var(--font--sdd)
+    font-size: 2vw
+    perspective: 300px
+    transition: right .3s ease-in-out
+
+  &--quests &__quests
+    right: 8vw
+  
+  &__quests-content
+    border: 2px solid #4bbbe1
+    padding: 1em
+    transform: rotateY(-11deg) skewY(14deg)
+    transform-origin: center
+    background: repeating-linear-gradient(to bottom, #4bbbe120 0, #4bbbe120 5px, #0002 8px)
+
+  &__quest
+    background: repeating-linear-gradient(to bottom, #4bbbe1 0, #4bbbe1 5px, #000 8px)
+    -webkit-background-clip: text
+    -webkit-text-fill-color: transparent
+    text-shadow: 0 0 2px #4bbbe150
+
+  &__level
+    position: absolute
+    top: 1vw
+    left: 1vw
+    width: 6vw
+    height: 6vw
+    display: flex
+    justify-content: center
+    align-items: center
+    border: 3px solid red
+    font: var(--font--blazed)
+    font-size: 3vw
+    color: var(--level--color)
+    border-color: var(--level--color)
+    text-shadow: -1px -1px black, 1px 1px black, 0 0 10px var(--level--color)
+    z-index: 1000
+    opacity: 0
+    transition: all 1s ease-in-out
+    animation: demo-myz-simple__level-pulse 2s infinite
+    --level--intense: 1
+
+  &--level-1 &__level
+    opacity: 1
+    --level--color: #4bbbe1
+    --level--intense: 1
+
+  &--level-2 &__level
+    opacity: 1
+    --level--color: #a5d571
+    --level--intense: 2
+
+  &--level-3 &__level
+    opacity: 1
+    --level--color: #ffef02
+    --level--intense: 3
+
+  &--level-4 &__level
+    opacity: 1
+    --level--color: #f58013
+    --level--intense: 4
+
+  &--level-5 &__level
+    opacity: 1
+    --level--color: #ed1f24
+    --level--intense: 5
+
+  &--level-highlight &__level
+    animation: demo-myz-simple__level-pulse 2s infinite, demo-myz-simple__level-highlight 1s forwards
+    
+
+@keyframes demo-myz-simple__level-pulse
+  0% 
+    text-shadow: -1px -1px black, 1px 1px black, 0 0 calc(var(--level--intense) * 5px) var(--level--color), 0 0 calc(var(--level--intense) * 10px) var(--level--color), 0 0 calc(var(--level--intense) * 20px) var(--level--color)
+  50% 
+    text-shadow: -1px -1px black, 1px 1px black, 0 0 calc(var(--level--intense) * 10px) var(--level--color), 0 0 calc(var(--level--intense) * 20px) var(--level--color), 0 0 calc(var(--level--intense) * 40px) var(--level--color)
+  100% 
+    text-shadow: -1px -1px black, 1px 1px black, 0 0 calc(var(--level--intense) * 5px) var(--level--color), 0 0 calc(var(--level--intense) * 10px) var(--level--color), 0 0 calc(var(--level--intense) * 20px) var(--level--color)
+
+@keyframes demo-myz-simple__level-highlight
+  0%, 100%
+    transform: scale(1)
+  50% 
+    transform: scale(1.2)
 
 </style>

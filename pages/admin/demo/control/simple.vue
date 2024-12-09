@@ -3,6 +3,11 @@
   .demo-control-simple__content
     .demo-control-simple__top
       DemoFormSlider(label="Volume", v-model="volume", :min="0", :max="100", @input="debounceMasterVolumeChange")
+      ElButton.demo-control-simple__quests(size="mini", type="primary", @click="onLevel(+1)") Level+
+      ElButton.demo-control-simple__quests(size="mini", type="primary", @click="onLevel(-1)") Level-
+      ElButton.demo-control-simple__quests(size="mini", @click="onLevel(level * -1)") L Reset
+      ElButton.demo-control-simple__quests(size="mini", type="primary", @click="onQuestOpen") Quests
+      ElButton.demo-control-simple__quests(size="mini", :type="questShow ? 'primary' : ''", @click="onQuestShow") {{ questShow ? 'Hide' : 'Show' }}
     .demo-control-simple__bottom
       .demo-control-simple__left
         .demo-control-simple__image(v-for="image in sliders", :key="image.values.group")
@@ -32,6 +37,15 @@
         | {{ sound.values.label }}
         .demo-control-simple__sound-controls
           .demo-control-simple__sound-play.el-icon-video-play(@click="onSoundClick(sound)")
+  ElDialog.demo-control-simple__quests-form(title="Quests", :visible.sync="questOpen", width="90%", :close-on-click-modal="false")  
+    .demo-control-simple__quests-fields
+      DemoFormInput(label="Quest 1", v-model="quests[0]")
+      DemoFormInput(label="Quest 2", v-model="quests[1]")
+      DemoFormInput(label="Quest 3", v-model="quests[2]")
+      DemoFormInput(label="Quest 4", v-model="quests[3]")
+      DemoFormInput(label="Quest 5", v-model="quests[4]")
+    .demo-control-simple__quests-actions
+      ElButton.demo-control-simple__quests(size="mini", type="primary", @click="onQuestUpdate") Update
 </template>
 
 <script>
@@ -62,6 +76,9 @@ export default {
     this.state = await StateEntity.load('myz', 'screen.config.simple', 'Screen Config - Simple', {
       musics: [],
       images: [],
+      quests: ['', '', '', '', ''],
+      questShow: false,
+      level: 0,
     }, this);
 
     this.playlists = await ActiveEntity.multi('Demo', {
@@ -97,6 +114,10 @@ export default {
       images: null,
       sliders: null,
       playlists: null,
+      quests: ['', '', '', '', ''],
+      questShow: false,
+      questOpen: false,
+      level: 0,
     };
   },
 
@@ -181,6 +202,29 @@ export default {
       });
     },
 
+    onQuestOpen() {
+      this.questOpen = true;
+    },  
+
+    onQuestClose() {
+      this.questOpen = false;
+    },  
+
+    onQuestShow() {
+      this.questShow = !this.questShow;
+      this.state.up('questShow');
+    },
+
+    onQuestUpdate() {
+      this.state.up('quests');
+      this.onQuestClose();
+    },  
+
+    onLevel(change) {
+      this.level += change;
+      this.state.up('level');
+    },
+
   },
 
 }
@@ -198,6 +242,9 @@ export default {
     grid-template-rows: min-content 1fr 150px
 
   &__top
+    display: grid
+    grid-template-columns: 1fr min-content min-content min-content min-content min-content
+    gap: .5em
     height: 5vh
 
   &__bottom
@@ -264,5 +311,17 @@ export default {
 
   &__sound-play:hover
     background: #666
+
+  &__quests-fields
+    display: grid
+    grid-template-columns: 1fr
+    gap: 1em
+
+  &__quests-actions
+    margin-top: 1em
+
+  &__right
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(300px, 400px))
 
 </style>
