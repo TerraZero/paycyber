@@ -17,6 +17,8 @@ const Handler = require('events');
 const HowlerSystem = require('./howler/HowlerSystem');
 const YoutubeSystem = require('./youtube/YoutubeSystem');
 const JukeBox = require('./util/JukeBox');
+const { Howl } = require('howler');
+const Path = require('path');
 
 module.exports = class SoundSystem {
 
@@ -83,11 +85,27 @@ module.exports = class SoundSystem {
     this.get().playlist(playlist, config);
   }
 
+  /**
+   * @param {string} id 
+   * @param {string} type
+   */
+  static loadSound(id, type = 'mp3') {
+    this.get().loadSound(id, type);
+  }
+
+  /**
+   * @param {string} id 
+   */
+  static sound(id) {
+    this.get().sound(id);
+  }
+
   constructor() {
     this._plugins = {};
     this.config = {};
     this.events = new Handler();
     this._playlist = new JukeBox();
+    this._sounds = {};
 
     this.events.on('end', event => {
       if (event.item?.data?.playlist) {
@@ -96,6 +114,24 @@ module.exports = class SoundSystem {
     }); 
 
     this.addPlugin('howler', new HowlerSystem(this));
+  }
+
+  /**
+   * @param {string} id 
+   * @param {string} type
+   */
+  loadSound(id, type = 'mp3') {
+    this._sounds[id] = new Howl({
+      src: [Path.join('/media/demo/paycyber/assets/sfx/', id + '.' + type)],
+    });
+  }
+
+  /**
+   * @param {string} id 
+   */
+  sound(id) {
+    this._sounds[id].volume(this.volume());
+    this._sounds[id].play();
   }
 
   addPlugin(name, plugin) {

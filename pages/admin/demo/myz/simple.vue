@@ -11,6 +11,11 @@
       .demo-myz-simple__quest(v-for="quest in questFilter", :key="quest") {{ quest }}
   .demo-myz-simple__level
     | {{ level }}
+  .demo-myz-simple__combats
+    .demo-myz-simple__combat
+    .demo-myz-simple__combat
+    .demo-myz-simple__combat
+    .demo-myz-simple__combat
 </template>
 
 <script>
@@ -45,6 +50,10 @@ export default {
       }
     });
 
+    SoundSystem.loadSound('combat-start');
+    SoundSystem.loadSound('danger-up');
+    SoundSystem.loadSound('danger-down');
+
     this.intro.on('ended', () => {
       if (!this.currentIntro) return;
       if (this.currentIntro.value.properties.loop) {
@@ -72,10 +81,20 @@ export default {
             this.questShow = values.value.questShow;
           }
           if (info.fields.includes('level')) {
+            if (this.level === 0 && values.value.level > 0) {
+              SoundSystem.sound('combat-start');
+            } else if (this.level < values.value.level) {
+              SoundSystem.sound('danger-up');
+            } else if (this.level > values.value.level) {
+              SoundSystem.sound('danger-down');
+            }
             this.levelHighlight = false;
             this.levelIntense = values.value.level;
             setTimeout(() => {
               this.levelHighlight = true;
+              setTimeout(() => {
+                this.levelHighlight = false;
+              }, 1200)
             }, 100);
             setTimeout(() => {
               this.level = values.value.level;
@@ -326,8 +345,8 @@ export default {
 
   &__level
     position: absolute
-    top: 1vw
-    left: 1vw
+    top: 4vw
+    left: 4vw
     width: 6vw
     height: 6vw
     display: flex
@@ -372,7 +391,67 @@ export default {
 
   &--level-highlight &__level
     animation: demo-myz-simple__level-pulse 2s infinite, demo-myz-simple__level-highlight 1s forwards
-    
+
+  &__combat
+    position: absolute
+    z-index: 1000
+    width: 10vw
+    height: 10vw
+    opacity: .8
+    transition: all 1s ease-in-out
+
+  &__combat:nth-child(1)
+    border-top: 2vw solid
+    border-left: 2vw solid
+    border-color: var(--level--color)
+    top: 1vw
+    left: 1vw
+    transform: translate(-100%, -100%)
+
+  &__combat:nth-child(2)
+    border-top: 2vw solid
+    border-right: 2vw solid
+    border-color: var(--level--color)
+    top: 1vw
+    right: 1vw
+    transform: translate(100%, -100%)
+
+  &__combat:nth-child(3)
+    border-bottom: 2vw solid
+    border-right: 2vw solid
+    border-color: var(--level--color)
+    bottom: 1vw
+    right: 1vw
+    transform: translate(100%, 100%)
+
+  &__combat:nth-child(4)
+    border-bottom: 2vw solid
+    border-left: 2vw solid
+    border-color: var(--level--color)
+    bottom: 1vw
+    left: 1vw
+    transform: translate(-100%, 100%)
+
+  &--level-highlight.demo-myz-simple--level &__combat
+    animation: demo-myz-simple__level-highlight 1s forwards
+
+  &--level &__combat
+    transform: translate(0, 0)
+
+  &--level-1 &__combat
+    --level--color: #4bbbe1
+
+  &--level-2 &__combat
+    --level--color: #a5d571
+
+  &--level-3 &__combat
+    --level--color: #ffef02
+
+  &--level-4 &__combat
+    --level--color: #f58013
+
+  &--level-5 &__combat
+    --level--color: #ed1f24
 
 @keyframes demo-myz-simple__level-pulse
   0% 

@@ -222,7 +222,11 @@ export default {
 
     onLevel(change) {
       this.level += change;
-      this.state.up('level');
+      if (this.level > 5 || this.level < 0) {
+        this.level -= change;
+      } else {
+        this.state.up('level');
+      }
     },
 
   },
