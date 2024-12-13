@@ -164,7 +164,7 @@ export default {
     text-shadow: .2vw .2vw red, .2vw .2vw 1vw red
   30%, 100%
     color: #ed1f24
-    text-shadow: .2vw .2vw red, .2vw .2vw 1vw red, .2vw .2vw 1vw red, .2vw .2vw 1vw red, .2vw .2vw 2vw red, .2vw .2vw 2vw red
+    text-shadow: .2vw .2vw red, .2vw .2vw 1vw red, .2vw .2vw 1vw red, .2vw .2vw 2vw red
 
 @keyframes demo-paycyber-logo__show-glitch-animation
   0%, 10%

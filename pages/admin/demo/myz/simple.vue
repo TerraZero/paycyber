@@ -80,6 +80,9 @@ export default {
           if (info.fields.includes('questShow')) {
             this.questShow = values.value.questShow;
           }
+          if (info.fields.includes('volume')) {
+            SoundSystem.get().volume(volume / 100);
+          }
           if (info.fields.includes('level')) {
             if (this.level === 0 && values.value.level > 0) {
               SoundSystem.sound('combat-start');
@@ -120,10 +123,6 @@ export default {
         this.log('control:stop');
         this.stop();
       });
-      socket.subscribe(this, 'control:sound:volume', ({ volume }) => {
-        console.log('volume', volume);
-        SoundSystem.get().volume(volume / 100);
-      });
     });
 
     StateEntity.load('myz', 'screen.config.simple', 'Screen Config - Simple', {
@@ -132,8 +131,10 @@ export default {
       quests: ['', '', '', '', ''],
       questShow: false,
       level: 0,
+      volume: 100,
     }, this).then(() => {
       this.levelIntense = this.level;
+      SoundSystem.get().volume(this.volume / 100);
     });
   },
 
@@ -146,6 +147,7 @@ export default {
       quests: [],
       questShow: false,
       level: 0,
+      volume: 100,
       levelIntense: 0,
       levelHighlight: false,
       focus: 'slider',

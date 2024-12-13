@@ -79,6 +79,7 @@ export default {
       quests: ['', '', '', '', ''],
       questShow: false,
       level: 0,
+      volume: 100,
     }, this);
 
     this.playlists = await ActiveEntity.multi('Demo', {
@@ -196,10 +197,8 @@ export default {
       });
     },
 
-    onMasterVolumeChange(volume) {
-      Socket.get().request('control:sound:volume', {
-        volume,
-      });
+    onMasterVolumeChange() {
+      this.state.up('volume');
     },
 
     onQuestOpen() {

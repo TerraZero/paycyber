@@ -50,6 +50,7 @@ module.exports = class JukeBox {
     if (this.shuffle) {
       this.shuffleNext();
     }
+    console.log('JukeBox items', this.nextIndex);
     return this;
   }
 
