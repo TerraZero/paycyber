@@ -26,6 +26,7 @@ SystemCollector.addPath(Path.join(__dirname, 'modules/form'));
 SystemCollector.addPath(Path.join(__dirname, 'modules/utils'));
 SystemCollector.addPath(Path.join(__dirname, 'modules/menu'));
 SystemCollector.addPath(Path.join(__dirname, 'modules/demo'));
+SystemCollector.addPath(Path.join(__dirname, 'modules/derivate'));
 
 SystemCollector.set('models', new Models());
 SystemCollector.set('storage', new Storage(prisma));

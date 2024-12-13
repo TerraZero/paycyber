@@ -41,8 +41,12 @@ export default {
 
     next() {
       if (this.line.length === 0) {
-        this.line = RandomUtil.getRandomIndexArray(this.slides);
-        if (this.line[0] === this.current?.index) this.line.shift();
+        if (this.slides.length === 1) {
+          this.line = [0];
+        } else {
+          this.line = RandomUtil.getRandomIndexArray(this.slides);
+          if (this.line[0] === this.current?.index) this.line.shift();
+        }
       }
       clearTimeout(this.current.timeout);
       this.current = {

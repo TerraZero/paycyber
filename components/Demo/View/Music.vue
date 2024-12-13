@@ -1,7 +1,7 @@
 <template lang="pug">
 .demo-view-music(:class="classes")
   .demo-view-music__label {{ values.label }} ({{ type }}: {{ values.group }})
-  ElImage.demo-view-music__image(v-if="src", :src="src")
+  ToolDerivate.demo-view-music__image(v-if="src", :src="src", resize="320,240")
     template(#placeholder)
       | No image
     template(#error)

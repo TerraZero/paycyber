@@ -19,6 +19,7 @@ export default {
       propertiesOptions: {
         loop: 'Loop',
         shuffle: 'Shuffle',
+        random: 'Random',
       },
       entity: null,
       label: '',

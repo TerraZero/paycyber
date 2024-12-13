@@ -1,0 +1,7 @@
+model ImageDerivate {
+  id Int @id @default(autoincrement())
+  image String
+  derivate String
+  cid String
+  params String @default("{}") // [json]
+}

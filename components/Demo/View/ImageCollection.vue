@@ -1,7 +1,7 @@
 <template lang="pug">
 .demo-view-image-collection
   .demo-view-image-collection__label {{ values.label }} ({{ type }}: {{ values.group }})
-  ElImage.demo-view-image-collection__teaser(v-if="teaser", :src="teaser")
+  ToolDerivate.demo-view-image-collection__teaser(v-if="teaser", :src="teaser", resize="320,240")
   .demo-view-image-collection__ids
     .demo-view-image-collection__id(v-for="id in ids", :key="id") {{ id }}
 </template>

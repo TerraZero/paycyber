@@ -11,14 +11,14 @@
     .demo-control-simple__bottom
       .demo-control-simple__left
         .demo-control-simple__image(v-for="image in sliders", :key="image.values.group")
-          ElImage.demo-control-simple__preview(v-if="image.states.teaser", :src="image.states.teaser.values.value.src", fit="cover")
+          ToolDerivate.demo-control-simple__preview(v-if="image.states.teaser", :src="image.states.teaser.values.value.src", fit="cover", resize="320,240")
           .demo-control-simple__text
             | {{ image.values.label }}
             .demo-control-simple__music(v-if="image.states.automusic")
               | Autostart: {{ image.states.automusic.values.label }}
             ElButtonGroup.demo-control-simple__controls
               ElButton.demo-control-simple__icon(icon="el-icon-video-play", size="mini", type="primary", @click="onPlayImage(image)")
-              ElButton.demo-control-simple__icon(icon="el-icon-lock", size="mini", @click="onPlayImage(image, true)")
+              //- ElButton.demo-control-simple__icon(icon="el-icon-lock", size="mini", @click="onPlayImage(image, true)")
       .demo-control-simple__right
         .demo-control-simple__music(v-for="music in playlists", :key="music.values.group")
           ElImage.demo-control-simple__preview(v-if="music.states.teaser", :src="music.states.teaser.values.value.src", fit="cover")
@@ -255,6 +255,12 @@ export default {
     display: grid
     grid-template-columns: 1fr 1fr
     height: 100%
+    min-height: 0
+    gap: .5em
+
+  &__left,
+  &__right
+    overflow-y: auto
     
   &__music,
   &__image
@@ -262,8 +268,7 @@ export default {
     background: #222
 
   &__preview
-    width: 25%
-    height: 15vh
+    aspect-ratio: 16/9
 
   &__text
     padding: .5em
@@ -324,8 +329,9 @@ export default {
   &__quests-actions
     margin-top: 1em
 
+  &__left,
   &__right
     display: grid
-    grid-template-columns: repeat(auto-fit, minmax(300px, 400px))
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
 
 </style>

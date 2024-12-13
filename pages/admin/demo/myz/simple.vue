@@ -326,6 +326,7 @@ export default {
     font-size: 2vw
     perspective: 300px
     transition: right .3s ease-in-out
+    filter: drop-shadow(0 0 5px black) drop-shadow(0 0 5px black) drop-shadow(0 0 5px black)
 
   &--quests &__quests
     right: 8vw

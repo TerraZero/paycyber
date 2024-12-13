@@ -10,7 +10,8 @@
     "scaff": "node ./scripts/postinstall.js",
     "db-edit": "npx prisma studio",
     "db-up": "npx prisma migrate dev --name init",
-    "db-seed": "node ./scripts/seed.js"
+    "db-seed": "node ./scripts/seed.js",
+    "rewrite": "node ./scripts/rewrite.js"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
@@ -21,12 +22,14 @@
     "glob": "^10.3.14",
     "howler": "^2.2.4",
     "jsonata": "^2.0.5",
+    "node-fetch": "^3.3.2",
     "nuxt": "^2.15.8",
     "prisma": "^5.14.0",
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0",
     "sass": "^1.55.0",
     "sass-loader": "^10",
+    "sharp": "^0.33.5",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "url-pattern": "^1.0.3",

@@ -1,7 +1,7 @@
 <template lang="pug">
 .demo-view-image(:class="classes")
   .demo-view-image__label {{ values.label }} ({{ type }}: {{ values.group }})
-  ElImage(:src="src")
+  ToolDerivate(:src="src", resize="320,240")
 </template>
 
 <script>
