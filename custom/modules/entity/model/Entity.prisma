@@ -1,0 +1,17 @@
+model Entity {
+  id Int @id @default(autoincrement())
+  realm String @default("default")
+  ident String
+  label String
+  type String
+  tags EntityTags[]
+  value String @default("{}") // [json]
+} 
+
+model EntityTags {
+  id Int @id @default(autoincrement())
+  ident String
+  label String
+  type String @default("default")
+  entities Entity[]
+}
